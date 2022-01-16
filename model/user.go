@@ -17,6 +17,11 @@ type User struct {
 	UpdatedAt time.Time
 }
 
+func UserInitRouter(engine *gin.Engine) {
+	r := engine.Group("/user")
+	r.GET("/list", UserList)
+}
+
 func UserList(ctx *gin.Context) {
 	time.Sleep(123 * time.Millisecond)
 	ctx.JSON(200, gin.H{

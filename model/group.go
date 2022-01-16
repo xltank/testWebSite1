@@ -11,6 +11,11 @@ type Group struct {
 	Description string `json:"description"`
 }
 
+func GroupInitRouter(engine *gin.Engine) {
+	r := engine.Group("/group")
+	r.GET("/list", GroupList)
+}
+
 func GroupList(ctx *gin.Context) {
 	time.Sleep(123 * time.Millisecond)
 	ctx.JSON(200, gin.H{

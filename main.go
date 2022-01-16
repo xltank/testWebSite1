@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"website/midware"
+	"website/router"
 )
 
 func main() {
@@ -11,7 +12,7 @@ func main() {
 
 	r.Use(midware.TimeCost())
 
-	InitRouter(r)
+	router.InitRouter(r)
 
 	r.Run()
 }
