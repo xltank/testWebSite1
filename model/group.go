@@ -6,9 +6,10 @@ import (
 )
 
 type Group struct {
-	Id          int    `json:"id,omitempty"`
-	Name        string `json:"name,omitempty"`
-	Description string `json:"description"`
+	Model
+	Id   int    `json:"id,omitempty"`
+	Name string `json:"name,omitempty"`
+	Desc string `json:"description"`
 }
 
 func GroupInitRouter(engine *gin.Engine) {

@@ -1,0 +1,28 @@
+package db
+
+import (
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
+	"gorm.io/gorm/schema"
+)
+import "gorm.io/driver/mysql"
+
+var Db *gorm.DB
+
+func InitMysql() {
+	dsn := "root:root1234@tcp(127.0.0.1:3306)/test?charset=utf8mb4&parseTime=True&loc=Local"
+
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Info),
+		NamingStrategy: schema.NamingStrategy{
+			//TablePrefix: "t_",   // table name prefix, table for `User` would be `t_users`
+			SingularTable: true, // use singular table name, table for `User` would be `user` with this option enabled
+			//NameReplacer: strings.NewReplacer("CID", "Cid"), // use name replacer to change struct/field name before convert it to db name
+		},
+	})
+	if err != nil {
+		panic("connect mysql error")
+	}
+
+	Db = db
+}

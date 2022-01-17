@@ -1,57 +1,51 @@
 package model
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
-	"time"
+	"website/db"
+	error2 "website/error"
+	"website/midware"
 )
 
 type User struct {
+	Model
 	Name       string `json:"name,omitempty"`
 	Email      string `json:"email,omitempty"`
 	Pass       string `json:"pass,omitempty"`
 	Role       string `json:"role,omitempty"` // max role: sa > admin > editor > member
-	Department string
-
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	Department string `json:"department,omitempty"`
 }
 
 func UserInitRouter(engine *gin.Engine) {
 	r := engine.Group("/user")
-	r.GET("/list", UserList)
+	r.Use(midware.Auth())
+	r.GET("/", UserList)
 }
 
 func UserList(ctx *gin.Context) {
-	time.Sleep(123 * time.Millisecond)
+	var users []User
+	r := db.Db.Find(&users)
+	if r.Error != nil {
+		ctx.JSON(3001, error2.NewParamError(r.Error))
+		return
+	}
+
 	ctx.JSON(200, gin.H{
 		"rtn": 0,
 		"data": gin.H{
-			"list": []User{
-				User{},
-				User{},
-			},
+			"list": users,
 		},
 	})
 }
 
-func UserLogin(c *gin.Context) {
-	// fmt.Println(c.Request.Body)
-	u := User{}
-	if e := c.ShouldBind(&u); e != nil {
-		fmt.Println(e)
-		c.JSON(400, gin.H{
-			"rtn":    400,
-			"errMsg": e.Error(),
-		})
-		return
-	}
+func UserCreate(ctx *gin.Context) {
 
-	c.JSON(200, gin.H{
-		"rtn": 0,
-		"data": gin.H{
-			"name": u.Name,
-			"pass": u.Pass,
-		},
-	})
+}
+
+func UserUpdate(ctx *gin.Context) {
+
+}
+
+func UserDelete(ctx *gin.Context) {
+
 }
