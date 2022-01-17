@@ -1,6 +1,8 @@
-package model
+package router
 
-import "time"
+import (
+	"time"
+)
 
 type Model struct {
 	ID        int       `json:"ID,omitempty"`

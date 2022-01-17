@@ -12,7 +12,7 @@ func Auth() gin.HandlerFunc {
 		if err != nil {
 			log.Println("get cookie error:", err)
 			ctx.AbortWithStatusJSON(401, error.NewAuthError(err))
-			return // to return before other handlers, use Abortxxx(). Otherwise, `return` not works.
+			return // `return` not works. To return before other handlers, use Abortxxx().
 		}
 		log.Println("Auth, coolie: " + cookie)
 
