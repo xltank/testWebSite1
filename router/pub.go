@@ -8,6 +8,9 @@ import (
 func PubInitRouter(engine *gin.Engine) {
 	r := engine.Group("/pub")
 	r.GET("/ping", PubGetServerTime)
+	r.GET("/panic", func(ctx *gin.Context) {
+		panic("/pub/panic")
+	})
 }
 
 func PubGetServerTime(ctx *gin.Context) {

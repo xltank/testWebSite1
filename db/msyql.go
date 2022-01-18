@@ -4,15 +4,14 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
+	"website/config"
 )
 import "gorm.io/driver/mysql"
 
 var Db *gorm.DB
 
 func InitMysql() {
-	dsn := "root:root1234@tcp(127.0.0.1:3306)/test?charset=utf8mb4&parseTime=True&loc=Local"
-
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
+	db, err := gorm.Open(mysql.Open(config.Conf.Mysql.Uri), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info),
 		NamingStrategy: schema.NamingStrategy{
 			//TablePrefix: "t_",   // table name prefix, table for `User` would be `t_users`
