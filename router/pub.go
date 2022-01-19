@@ -1,6 +1,7 @@
 package router
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"time"
 )
@@ -14,6 +15,7 @@ func PubInitRouter(engine *gin.Engine) {
 }
 
 func PubGetServerTime(ctx *gin.Context) {
+	fmt.Println("Pub Get Server Time")
 	ctx.JSON(200, gin.H{
 		"rtn": 0,
 		"data": gin.H{

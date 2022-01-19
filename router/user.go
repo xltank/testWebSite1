@@ -26,6 +26,11 @@ type UserQueryParam struct {
 	Limit   int    `form:"limit"`
 }
 
+type UserLoginParam struct {
+	Email string `binding:"required"`
+	Pass  string `binding:"required"`
+}
+
 func UserInitRouter(engine *gin.Engine) {
 	r := engine.Group("/user")
 	r.Use(midware.Auth())

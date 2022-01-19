@@ -3,6 +3,7 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 	"time"
+	"website/res"
 )
 
 type Group struct {
@@ -19,13 +20,8 @@ func GroupInitRouter(engine *gin.Engine) {
 
 func GroupList(ctx *gin.Context) {
 	time.Sleep(123 * time.Millisecond)
-	ctx.JSON(200, gin.H{
-		"rtn": 0,
-		"data": gin.H{
-			"list": []User{
-				User{},
-				User{},
-			},
-		},
-	})
+	obj := make(map[string]User, 20)
+	obj["list"] = User{}
+	ctx.JSON(200, res.Ok.Json(obj))
+
 }
