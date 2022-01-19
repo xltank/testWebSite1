@@ -1,9 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+	"time"
 	"website/config"
 	"website/db"
 	error2 "website/error"
@@ -18,7 +20,7 @@ func main() {
 		return
 	}
 
-	r := gin.Default()
+	r := gin.New()
 
 	r.Use(gin.CustomRecovery(func(c *gin.Context, recovered interface{}) {
 		if err, ok := recovered.(string); ok {
@@ -27,19 +29,19 @@ func main() {
 		c.AbortWithStatus(http.StatusInternalServerError)
 	}))
 
-	//r.Use(gin.LoggerWithFormatter(func(param gin.LogFormatterParams) string {
-	//	return fmt.Sprintf("%s - [%s] %s %s \"%s\" %d %s \"%s\" %s\n",
-	//		param.TimeStamp.Format(time.RFC3339),
-	//		param.ClientIP,
-	//		param.Method,
-	//		param.Request.Proto,
-	//		param.Path,
-	//		param.StatusCode,
-	//		param.Latency,
-	//		param.Request.UserAgent(),
-	//		param.ErrorMessage,
-	//	)
-	//}))
+	r.Use(gin.LoggerWithFormatter(func(param gin.LogFormatterParams) string {
+		return fmt.Sprintf("%s - [%s] %s %s \"%s\" %d %s \"%s\" %s\n",
+			param.TimeStamp.Format(time.RFC3339),
+			param.ClientIP,
+			param.Method,
+			param.Request.Proto,
+			param.Path,
+			param.StatusCode,
+			param.Latency,
+			param.Request.UserAgent(),
+			param.ErrorMessage,
+		)
+	}))
 
 	r.Use(midware.TimeCost())
 
