@@ -3,7 +3,7 @@ package midware
 import (
 	"github.com/gin-gonic/gin"
 	"log"
-	"website/error"
+	"website/res"
 )
 
 func Auth() gin.HandlerFunc {
@@ -11,7 +11,7 @@ func Auth() gin.HandlerFunc {
 		cookie, err := ctx.Cookie("token")
 		if err != nil {
 			log.Println("get cookie error:", err)
-			ctx.AbortWithStatusJSON(401, error.NewAuthError(err))
+			ctx.AbortWithStatusJSON(401, res.AuthErr)
 			return // `return` not works. To return before other handlers, use Abortxxx().
 		}
 		log.Println("Auth, coolie: " + cookie)
