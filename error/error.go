@@ -6,10 +6,10 @@ import (
 	"log"
 )
 
-const CODE_SERVER_ERROR int = 1000
-const CODE_PARAM_ERROR int = 2000
-const CODE_AUTH_ERROR int = 3000
-const CODE_LOGIN_ERROR int = 3001
+const CodeServerError int = 1000
+const CodeParamError int = 2000
+const CodeAuthError int = 3000
+const CodeLoginError int = 3001
 
 type Error struct {
 	Rtn    int
@@ -53,26 +53,26 @@ func NewServerError(e interface{}) Error {
 	if e == nil {
 		e = "Server Error"
 	}
-	return create(CODE_SERVER_ERROR, e)
+	return create(CodeServerError, e)
 }
 
 func NewParamError(e interface{}) Error {
 	if e == nil {
 		e = "Param Error"
 	}
-	return create(CODE_PARAM_ERROR, e)
+	return create(CodeParamError, e)
 }
 
 func NewLoginError(e interface{}) Error {
 	if e == nil {
 		e = "Login Error"
 	}
-	return create(CODE_LOGIN_ERROR, e)
+	return create(CodeLoginError, e)
 }
 
 func NewAuthError(e interface{}) Error {
 	if e == nil {
 		e = "Auth Error"
 	}
-	return create(CODE_AUTH_ERROR, e)
+	return create(CodeAuthError, e)
 }

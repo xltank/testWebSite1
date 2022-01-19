@@ -49,3 +49,8 @@ func UserLogout(ctx *gin.Context) {
 		"data": "",
 	})
 }
+
+type UserLoginParam struct {
+	Email string `binding:"required"`
+	Pass  string `binding:"required"`
+}
