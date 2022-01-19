@@ -11,6 +11,10 @@ func PubInitRouter(engine *gin.Engine) {
 	r.GET("/panic", func(ctx *gin.Context) {
 		panic("/pub/panic")
 	})
+
+	r.GET("/file/main", func(c *gin.Context) {
+		c.File("main.go")
+	})
 }
 
 func PubGetServerTime(ctx *gin.Context) {

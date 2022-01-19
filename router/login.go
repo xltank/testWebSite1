@@ -10,7 +10,7 @@ import (
 func UserLogin(ctx *gin.Context) {
 	// fmt.Println(ctx.Request.Body)
 	var u UserLoginParam
-	if e := ctx.ShouldBind(&u); e != nil {
+	if e := ctx.ShouldBindJSON(&u); e != nil {
 		ctx.JSON(400, error.NewParamError(e.Error()))
 		return
 	}
