@@ -3,17 +3,17 @@ package main
 import (
 	"fmt"
 	"website/db"
-	"website/router"
+	. "website/model"
 )
 
 func main() {
 	db.InitMysql()
 
-	var users []router.User
+	var users []User
 	r1 := db.Db.Find(&users)
 	fmt.Println(r1)
 
-	u := router.User{
+	u := User{
 		Name:       "Jason",
 		Pass:       "123",
 		Department: "test",

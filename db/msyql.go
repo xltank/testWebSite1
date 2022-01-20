@@ -23,5 +23,9 @@ func InitMysql() {
 		panic("connect mysql error")
 	}
 
+	if err != nil {
+		panic(err)
+	}
+
 	Db = db
 }
