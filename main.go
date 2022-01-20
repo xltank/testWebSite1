@@ -22,6 +22,12 @@ func main() {
 
 	r := gin.New()
 
+	r.Static("/public", "./public")
+
+	gin.DebugPrintRouteFunc = func(httpMethod, absolutePath, handlerName string, nuHandlers int) {
+		//log.Printf("endpoint %v %v %v %v\n", httpMethod, absolutePath, handlerName, nuHandlers)
+	}
+
 	r.Use(gin.CustomRecovery(func(c *gin.Context, recovered interface{}) {
 		if err, ok := recovered.(string); ok {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, error2.NewServerError(err))
