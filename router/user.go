@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	"log"
 	"strings"
 	. "website/db"
@@ -107,13 +108,13 @@ func UserAddGroup(ctx *gin.Context) {
 	// 没办法写入 role 字段
 	//err = Db.Model(&User{Model: Model{ID: ug.UserId}}).Where("id = ?", ug.UserId).Association("Groups").Append(&Group{Model: Model{ID: ug.GroupId}})
 
-	// 不管用，每次都生成新的记录
-	//Db.Clauses(clause.OnConflict{
-	//	Columns:   []clause.Column{{Name: "user_id"}, {Name: "group_id"}},
-	//	DoUpdates: clause.Assignments(map[string]interface{}{"role": ug.Role}),
-	//}).Create(&ug)
+	// 需要给user_group表创建unique联合索引，而且不需要指定 Columns
+	Db.Clauses(clause.OnConflict{
+		//Columns:   []clause.Column{{Name: "user_id"}, {Name: "group_id"}},
+		DoUpdates: clause.Assignments(map[string]interface{}{"role": ug.Role}),
+	}).Create(&ug)
 
-	err = Db.Transaction(func(tx *gorm.DB) error {
+	/*err = Db.Transaction(func(tx *gorm.DB) error {
 		r := Db.Where("user_id = ? AND group_id = ?", ug.UserId, ug.GroupId).Find(&UserGroup{})
 		if r.Error != nil {
 			return r.Error
@@ -124,7 +125,7 @@ func UserAddGroup(ctx *gin.Context) {
 			Db.Where("user_id = ? AND group_id = ?", ug.UserId, ug.GroupId).Updates(&ug)
 		}
 		return nil
-	})
+	})*/
 
 	if err != nil {
 		SendParamError(ctx, err.Error())
