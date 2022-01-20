@@ -46,7 +46,7 @@ func UserList(ctx *gin.Context) {
 		return
 	}
 
-	ReturnOK(ctx, gin.H{
+	SendOK(ctx, gin.H{
 		"list":   users,
 		"offset": q.Offset,
 		"limit":  q.Limit,

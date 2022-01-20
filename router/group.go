@@ -32,14 +32,14 @@ func create(ctx *gin.Context) {
 	var g Group
 	err := ctx.ShouldBindJSON(&g)
 	if err != nil {
-		ReturnParamError(ctx, err.Error())
+		SendParamError(ctx, err.Error())
 		return
 	}
 
 	r := Db.Create(&g)
 	if r.Error != nil {
-		ReturnParamError(ctx, err.Error())
+		SendParamError(ctx, err.Error())
 		return
 	}
-	ReturnOK(ctx, g)
+	SendOK(ctx, g)
 }
