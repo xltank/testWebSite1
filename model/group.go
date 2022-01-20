@@ -15,8 +15,8 @@ type GroupQueryParam struct {
 
 type UserGroup struct {
 	Model
-	UserId  int    `json:"uid,omitempty" uri:"uid" gorm:"primaryKey;autoIncrement:false"`
-	GroupId int    `json:"gid,omitempty" uri:"gid" gorm:"primaryKey;autoIncrement:false"`
+	UserId  int    `json:"uid,omitempty" uri:"uid" `
+	GroupId int    `json:"gid,omitempty" uri:"gid" `
 	Role    string `json:"role,omitempty" uri:"role"`
 }
 

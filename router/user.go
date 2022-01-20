@@ -108,7 +108,7 @@ func UserAddGroup(ctx *gin.Context) {
 	// 没办法写入 role 字段
 	//err = Db.Model(&User{Model: Model{ID: ug.UserId}}).Where("id = ?", ug.UserId).Association("Groups").Append(&Group{Model: Model{ID: ug.GroupId}})
 
-	// 需要给user_group表创建unique联合索引，而且不需要指定 Columns
+	// 需要给user_group表创建unique联合索引，而且：1，不需要指定 Columns；2，不需要在UserGroup model里声明 gorm 标注；3，不需要 SetupJoinTable；
 	Db.Clauses(clause.OnConflict{
 		//Columns:   []clause.Column{{Name: "user_id"}, {Name: "group_id"}},
 		DoUpdates: clause.Assignments(map[string]interface{}{"role": ug.Role}),

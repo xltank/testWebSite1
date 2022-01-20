@@ -9,7 +9,6 @@ import (
 	"website/config"
 	"website/db"
 	"website/midware"
-	"website/model"
 	"website/router"
 	. "website/utils"
 )
@@ -53,8 +52,6 @@ func main() {
 	r.Use(midware.TimeCost())
 
 	db.InitMysql()
-
-	err = db.Db.SetupJoinTable(&model.User{}, "Groups", &model.UserGroup{})
 
 	router.InitRouter(r)
 
