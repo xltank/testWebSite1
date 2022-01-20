@@ -2,9 +2,11 @@ package router
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"website/db"
 	"website/res"
+	"website/utils"
 )
 
 func UserLogin(ctx *gin.Context) {
@@ -34,7 +36,12 @@ func UserLogin(ctx *gin.Context) {
 		ctx.JSON(400, res.MarshalJsonErr)
 		return
 	}
-	ctx.SetCookie("token", string(j), 3600, "/", "my.com", false, true)
+	fmt.Println("User:", j)
+	token, err := utils.GetToken(2) // todo ? id
+	if err != nil {
+		ctx.JSON(301, res.AuthErr)
+	}
+	ctx.SetCookie("token", token, 3600, "/", "my.com", false, true)
 
 	ctx.JSON(200, res.Ok.Json(user))
 }

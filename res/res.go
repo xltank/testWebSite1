@@ -36,5 +36,6 @@ var (
 	Err             = response(500, "Serve Error") //服务器错误，请重新再试
 	ParamErr        = response(3000, "Param Error")
 	UserPasswordErr = response(3001, "User Password Error")
+	TokenParseErr = response(3002, "Token Parse Error")
 	AuthErr         = response(4000, "Auth Error")
 )
