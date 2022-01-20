@@ -2,26 +2,44 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	"time"
+	"net/http"
+	. "website/db"
+	. "website/model"
 	"website/res"
+	. "website/utils"
 )
-
-type Group struct {
-	Model
-	Id   int    `json:"id,omitempty"`
-	Name string `json:"name,omitempty"`
-	Desc string `json:"description"`
-}
 
 func GroupInitRouter(engine *gin.Engine) {
 	r := engine.Group("/group")
-	r.GET("/list", GroupList)
+	r.GET("/list", list)
+	r.POST("/", create)
 }
 
-func GroupList(ctx *gin.Context) {
-	time.Sleep(123 * time.Millisecond)
-	obj := make(map[string]User, 20)
-	obj["list"] = User{}
-	ctx.JSON(200, res.Ok.Json(obj))
+func list(ctx *gin.Context) {
+	var q GroupQueryParam
+	err := ctx.ShouldBindQuery(q)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, res.ParamErr.Error("Invalid Params"))
+		return
+	}
 
+	var groups []Group
+	Db.Offset(q.Offset).Limit(q.Limit).Find(&groups)
+	ctx.JSON(200, res.Ok.Json(groups))
+}
+
+func create(ctx *gin.Context) {
+	var g Group
+	err := ctx.ShouldBindJSON(&g)
+	if err != nil {
+		ReturnParamError(ctx, err.Error())
+		return
+	}
+
+	r := Db.Create(&g)
+	if r.Error != nil {
+		ReturnParamError(ctx, err.Error())
+		return
+	}
+	ReturnOK(ctx, g)
 }

@@ -4,7 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"website/db"
+	. "website/db"
+	. "website/model"
 	"website/res"
 	"website/utils"
 )
@@ -18,7 +19,7 @@ func UserLogin(ctx *gin.Context) {
 	}
 
 	user := User{}
-	r := db.Db.Where(map[string]interface{}{"email": u.Email}).Find(&user)
+	r := Db.Where(map[string]interface{}{"email": u.Email}).Find(&user)
 	if r.Error != nil {
 		ctx.JSON(400, res.ParamErr.Error("User Not Found"))
 		return

@@ -9,27 +9,9 @@ import (
 	"website/db"
 	error "website/error"
 	"website/midware"
+	. "website/model"
+	. "website/utils"
 )
-
-type User struct {
-	Model
-	Name       string `json:"name,omitempty" binding:"required"`
-	Email      string `json:"email,omitempty" binding:"required"`
-	Pass       string `json:"pass,omitempty" binding:"required"`
-	Role       string `json:"role,omitempty"` // max role: sa > admin > editor > member
-	Department string `json:"department,omitempty"`
-}
-
-type UserQueryParam struct {
-	Keyword string `form:"keyword"`
-	Offset  int    `form:"offset"`
-	Limit   int    `form:"limit"`
-}
-
-type UserLoginParam struct {
-	Email string `binding:"required"`
-	Pass  string `binding:"required"`
-}
 
 func UserInitRouter(engine *gin.Engine) {
 	r := engine.Group("/user")
@@ -64,14 +46,11 @@ func UserList(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(200, gin.H{
-		"rtn": 0,
-		"data": gin.H{
-			"list":   users,
-			"offset": q.Offset,
-			"limit":  q.Limit,
-			"total":  total,
-		},
+	ReturnOK(ctx, gin.H{
+		"list":   users,
+		"offset": q.Offset,
+		"limit":  q.Limit,
+		"total":  total,
 	})
 }
 
