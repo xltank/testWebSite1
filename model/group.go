@@ -2,9 +2,10 @@ package model
 
 type Group struct {
 	Model
-	Name  string `json:"name,omitempty"`
-	Desc  string `json:"desc"`
-	Users []User `json:"users" gorm:"many2many:user_group;"`
+	Name string `json:"name,omitempty"`
+	Desc string `json:"desc"`
+	//Users []User `json:"users" gorm:"many2many:user_group;"`
+	Role string `json:"role"`
 }
 
 type GroupQueryParam struct {
