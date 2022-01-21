@@ -23,13 +23,26 @@ func UserInitRouter(engine *gin.Engine) {
 }
 
 func UserList(ctx *gin.Context) {
+	v, ok := ctx.Get("user")
+	if !ok {
+		SendServerError(ctx, "Not found ctx.user")
+		return
+	}
+	var user User
+	if user, ok = v.(User); !ok {
+		SendServerError(ctx, "Invalid ctx.user")
+		return
+	}
+
+	log.Println(user)
+
 	var q UserQueryParam
 	err := ctx.ShouldBindQuery(&q)
 	if err != nil {
 		ctx.JSON(400, NewParamError(err))
 		return
 	}
-	fmt.Println(q)
+	fmt.Println("UserQueryParam:", q)
 
 	q.Keyword = strings.TrimSpace(q.Keyword)
 	kw := "%" + q.Keyword + "%"

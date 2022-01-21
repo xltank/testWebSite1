@@ -42,7 +42,7 @@ func UserLogin(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(301, res.AuthErr)
 	}
-	ctx.SetCookie("token", token, 3600, "/", "my.com", false, true)
+	ctx.SetCookie("token", token, 24*3600, "/", "my.com", false, true)
 
 	ctx.JSON(200, res.Ok.Json(user))
 }

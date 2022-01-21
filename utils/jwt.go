@@ -13,8 +13,10 @@ type Claims struct {
 	jwt.StandardClaims
 }
 
+const tokenTTL = 24 * time.Hour
+
 func GetToken(id int) (string, error) {
-	expireTime := time.Now().Add(7 * 24 * time.Hour)
+	expireTime := time.Now().Add(tokenTTL)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &Claims{
 		UserId: id,
 		StandardClaims: jwt.StandardClaims{

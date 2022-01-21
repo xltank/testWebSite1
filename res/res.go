@@ -34,6 +34,7 @@ var (
 	MarshalJsonErr  = response(1000, "Marshal Json Error")
 	Ok              = response(200, "")            // 成功
 	Err             = response(500, "Serve Error") //服务器错误，请重新再试
+	ServerErr       = response(500, "Serve Error") //服务器错误，请重新再试
 	ParamErr        = response(3000, "Param Error")
 	UserPasswordErr = response(3001, "User Password Error")
 	TokenParseErr   = response(3002, "Token Parse Error")
