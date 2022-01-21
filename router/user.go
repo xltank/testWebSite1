@@ -19,7 +19,7 @@ func UserInitRouter(engine *gin.Engine) {
 	r.GET("/", UserList)
 	r.POST("/", UserCreateMany)
 	r.PUT("/", UserUpsertOne)
-	r.POST("/:uid/group/:gid/role/:role", UserAddGroup)
+	r.POST("/:uid/group/:gid/role/:role", UserAddToGroup)
 }
 
 func UserList(ctx *gin.Context) {
@@ -96,7 +96,7 @@ func UserUpsertOne(ctx *gin.Context) {
 
 }
 
-func UserAddGroup(ctx *gin.Context) {
+func UserAddToGroup(ctx *gin.Context) {
 	var ug UserGroup
 	err := ctx.ShouldBindUri(&ug)
 	if err != nil {
@@ -111,6 +111,9 @@ func UserAddGroup(ctx *gin.Context) {
 
 	// Option 2
 	// 需要给user_group表创建unique联合索引，而且：1，不需要指定 Columns；2，不需要在UserGroup model里声明 gorm 标注；3，不需要 SetupJoinTable；
+	// 文档：INSERT ... ON DUPLICATE KEY UPDATE is a MariaDB/MySQL extension to the INSERT statement that,
+	// 		if it finds a duplicate unique or primary key, will instead perform an UPDATE.
+	// 语句：INSERT INTO `group` (`createdAt`,`updatedAt`,`name`,`desc`) VALUES ('2022-01-21 12:18:31.518','2022-01-21 12:18:31.518','group3','desc2'),('2022-01-21 12:18:31.518','2022-01-21 12:18:31.518','group4','desc3') ON DUPLICATE KEY UPDATE `id`=`id`
 	Db.Clauses(clause.OnConflict{
 		//Columns:   []clause.Column{{Name: "user_id"}, {Name: "group_id"}},
 		DoUpdates: clause.Assignments(map[string]interface{}{"role": ug.Role}),

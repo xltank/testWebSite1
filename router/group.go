@@ -2,6 +2,7 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm/clause"
 	"net/http"
 	. "website/db"
 	. "website/model"
@@ -12,7 +13,7 @@ import (
 func GroupInitRouter(engine *gin.Engine) {
 	r := engine.Group("/group")
 	r.GET("/list", list)
-	r.POST("/", create)
+	r.POST("/", createMany)
 }
 
 func list(ctx *gin.Context) {
@@ -28,18 +29,16 @@ func list(ctx *gin.Context) {
 	ctx.JSON(200, res.Ok.Json(groups))
 }
 
-func create(ctx *gin.Context) {
-	var g Group
-	err := ctx.ShouldBindJSON(&g)
+func createMany(ctx *gin.Context) {
+	var gs []Group
+	err := ctx.ShouldBindJSON(&gs)
 	if err != nil {
 		SendParamError(ctx, err.Error())
 		return
 	}
 
-	r := Db.Create(&g)
-	if r.Error != nil {
-		SendParamError(ctx, err.Error())
-		return
-	}
-	SendOK(ctx, g)
+	Db.Clauses(clause.OnConflict{
+		DoNothing: true,
+	}).Create(&gs)
+	SendOK(ctx, gs)
 }

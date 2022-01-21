@@ -11,7 +11,7 @@ type User struct {
 	Pass       string  `json:"pass,omitempty"`
 	Role       string  `json:"role,omitempty"` // max role: sa > admin > editor > member
 	Department string  `json:"department,omitempty"`
-	Groups     []Group `json:"groups" binding:"required" gorm:"many2many:user_group;"`
+	Groups     []Group `json:"groups" gorm:"many2many:user_group;"`
 }
 
 type UserQueryParam struct {
