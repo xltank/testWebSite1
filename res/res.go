@@ -1,10 +1,21 @@
 package res
 
+import (
+	"github.com/gin-gonic/gin"
+	"net/http"
+)
+
 type Response struct {
 	Rtn    int         `json:"rtn"`
 	ErrMsg string      `json:"errMsg"`
 	Data   interface{} `json:"data"`
 }
+
+/*
+res.SendOK(data)
+res.SendParamErr(error.ErrUserLogin, "user id: xxxx")
+res.SendParamErr(error.Errxxx, err)
+*/
 
 func response(rtn int, msg string) *Response {
 	return &Response{
@@ -15,6 +26,9 @@ func response(rtn int, msg string) *Response {
 }
 
 func (r *Response) Error(msg string) Response {
+	if msg == "" {
+		msg = "Param error"
+	}
 	return Response{
 		Rtn:    r.Rtn,
 		ErrMsg: msg,
@@ -31,12 +45,23 @@ func (r *Response) Json(data interface{}) Response {
 }
 
 var (
-	MarshalJsonErr  = response(1000, "Marshal Json Error")
-	Ok              = response(200, "")            // 成功
-	Err             = response(500, "Serve Error") //服务器错误，请重新再试
-	ServerErr       = response(500, "Serve Error") //服务器错误，请重新再试
-	ParamErr        = response(3000, "Param Error")
-	UserPasswordErr = response(3001, "User Password Error")
-	TokenParseErr   = response(3002, "Token Parse Error")
-	AuthErr         = response(4000, "Auth Error")
+	Ok        = response(0, "")               // 成功
+	ServerErr = response(1000, "Serve Error") //服务器错误，请重新再试
+	ParamErr  = response(2000, "Param Error")
+	//UserPasswordErr = response(2002, "User Password Error")
+	//TokenParseErr   = response(2004, "Token Parse Error")
+	//AuthErr         = response(2006, "Auth Error")
+
 )
+
+func SendOK(ctx *gin.Context, data interface{}) {
+	ctx.JSON(http.StatusOK, Ok.Json(data))
+}
+
+func SendParamError(ctx *gin.Context, msg string) {
+	ctx.JSON(http.StatusBadRequest, ParamErr.Error(msg))
+}
+
+func SendServerError(ctx *gin.Context, msg string) {
+	ctx.JSON(http.StatusInternalServerError, ServerErr.Error(msg))
+}

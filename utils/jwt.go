@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-var jwtkey = []byte("dddjjd22dad")
+var jwtKey = []byte("dddjjd22dad")
 
 type Claims struct {
 	UserId int `json:"userId,omitempty"`
@@ -24,7 +24,7 @@ func GetToken(id int) (string, error) {
 			IssuedAt:  time.Now().Unix(),
 		},
 	})
-	str, err := token.SignedString(jwtkey)
+	str, err := token.SignedString(jwtKey)
 	if err != nil {
 		fmt.Println("Get Token Err:", err)
 		return "", err
@@ -35,7 +35,7 @@ func GetToken(id int) (string, error) {
 func ParseToken(str string) (*jwt.Token, *Claims, error) {
 	claims := &Claims{}
 	token, err := jwt.ParseWithClaims(str, claims, func(token *jwt.Token) (interface{}, error) {
-		return jwtkey, nil
+		return jwtKey, nil
 	})
 	return token, claims, err
 }

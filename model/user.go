@@ -25,6 +25,12 @@ type UserLoginParam struct {
 	Pass  string `binding:"required"`
 }
 
+//type UserSignupParam struct {
+//	Email string `binding:"required"`
+//	Pass  string `binding:"required"`
+//	Pass2 string `binding:"required"`
+//}
+
 /*func UserGetOneByEmail(email string) *User {
 	var user User
 	db.Db.Where(map[string]string{email: email}).Find(&user)

@@ -10,7 +10,6 @@ import (
 	"website/db"
 	"website/midware"
 	"website/router"
-	. "website/utils"
 )
 
 func main() {
@@ -30,7 +29,7 @@ func main() {
 
 	r.Use(gin.CustomRecovery(func(c *gin.Context, recovered interface{}) {
 		if err, ok := recovered.(string); ok {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, NewServerError(err))
+			c.AbortWithStatusJSON(http.StatusInternalServerError, err)
 		}
 		c.AbortWithStatus(http.StatusInternalServerError)
 	}))
@@ -50,6 +49,8 @@ func main() {
 	}))
 
 	r.Use(midware.TimeCost())
+
+	r.Use(midware.CORSMiddleware())
 
 	db.InitMysql()
 

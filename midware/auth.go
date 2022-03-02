@@ -19,15 +19,14 @@ func Auth() gin.HandlerFunc {
 
 		if err != nil {
 			log.Println("get cookie error:", err)
-			ctx.AbortWithStatusJSON(401, res.TokenParseErr)
+			ctx.AbortWithStatusJSON(401, "Token parse error")
 			return // `return` not works. To return before other handlers, use Abortxxx().
 		}
 		log.Println("UserId from token: ", claims.UserId)
-		//todo ? 查询用户信息
 		var user User
 		r := Db.First(&user, claims.UserId)
 		if r.Error != nil {
-			utils.SendParamError(ctx, r.Error.Error())
+			res.SendParamError(ctx, r.Error.Error())
 			return
 		}
 

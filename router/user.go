@@ -10,7 +10,7 @@ import (
 	. "website/db"
 	"website/midware"
 	. "website/model"
-	. "website/utils"
+	. "website/res"
 )
 
 func UserInitRouter(engine *gin.Engine) {
@@ -39,7 +39,7 @@ func UserList(ctx *gin.Context) {
 	var q UserQueryParam
 	err := ctx.ShouldBindQuery(&q)
 	if err != nil {
-		ctx.JSON(400, NewParamError(err))
+		SendParamError(ctx, "")
 		return
 	}
 	fmt.Println("UserQueryParam:", q)
@@ -56,7 +56,7 @@ func UserList(ctx *gin.Context) {
 	}
 
 	if r.Error != nil {
-		ctx.JSON(400, NewParamError(r.Error))
+		SendParamError(ctx, r.Error.Error())
 		return
 	}
 
@@ -72,13 +72,13 @@ func UserCreateMany(ctx *gin.Context) {
 	var users []User
 	e := ctx.BindJSON(&users)
 	if e != nil {
-		ctx.JSON(400, NewParamError(e))
+		SendParamError(ctx, e.Error())
 		return
 	}
 	log.Println("UserCreate, ", users)
 	r := Db.Create(&users)
 	if r.Error != nil {
-		ctx.JSON(400, NewServerError(r.Error))
+		SendParamError(ctx, r.Error.Error())
 		return
 	}
 
@@ -92,13 +92,13 @@ func UserUpsertOne(ctx *gin.Context) {
 	var user User
 	e := ctx.BindJSON(&user)
 	if e != nil {
-		ctx.JSON(400, NewParamError(e))
+		SendParamError(ctx, e.Error())
 		return
 	}
 
 	r := Db.Save(&user)
 	if r.Error != nil {
-		ctx.JSON(400, NewServerError(r.Error))
+		SendParamError(ctx, r.Error.Error())
 		return
 	}
 
