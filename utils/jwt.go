@@ -4,21 +4,24 @@ import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"time"
+	. "website/model"
 )
 
 var jwtKey = []byte("dddjjd22dad")
 
 type Claims struct {
-	UserId int `json:"userId,omitempty"`
+	ID    int    `json:"id,omitempty"`
+	Email string `json:"email,omitempty"`
 	jwt.StandardClaims
 }
 
 const tokenTTL = 24 * time.Hour
 
-func GetToken(id int) (string, error) {
+func GetToken(u User) (string, error) {
 	expireTime := time.Now().Add(tokenTTL)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &Claims{
-		UserId: id,
+		ID:    u.ID,
+		Email: u.Email,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expireTime.Unix(),
 			IssuedAt:  time.Now().Unix(),

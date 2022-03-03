@@ -9,7 +9,7 @@ import (
 )
 
 func GroupInitRouter(engine *gin.Engine) {
-	r := engine.Group("/group")
+	r := engine.Group("/api/group")
 	r.GET("/list", list)
 	r.POST("/", createMany)
 }

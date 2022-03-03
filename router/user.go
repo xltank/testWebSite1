@@ -8,14 +8,14 @@ import (
 	"log"
 	"strings"
 	. "website/db"
-	"website/midware"
 	. "website/model"
 	. "website/res"
 )
 
+var UserFields = []string{"email", "id", "name", "department", "role", "createdAt", "updatedAt"}
+
 func UserInitRouter(engine *gin.Engine) {
-	r := engine.Group("/user")
-	r.Use(midware.Auth())
+	r := engine.Group("/api/user")
 	r.GET("/", UserList)
 	r.POST("/", UserCreateMany)
 	r.PUT("/", UserUpsertOne)
@@ -50,9 +50,9 @@ func UserList(ctx *gin.Context) {
 	var total int64
 	var r *gorm.DB
 	if q.Keyword != "" {
-		r = Db.Preload("Groups").Where("name like ?", kw).Or("email like ?", kw).Or("department like ?", kw).Limit(q.Limit).Offset(q.Offset).Find(&users).Count(&total)
+		r = Db.Preload("Groups").Where("name like ?", kw).Or("email like ?", kw).Or("department like ?", kw).Limit(q.Limit).Offset(q.Offset).Find(&users).Select(UserFields).Count(&total)
 	} else {
-		r = Db.Preload("Groups").Limit(q.Limit).Offset(q.Offset).Find(&users).Count(&total)
+		r = Db.Preload("Groups").Select(UserFields).Limit(q.Limit).Offset(q.Offset).Find(&users).Count(&total)
 	}
 
 	if r.Error != nil {
@@ -92,6 +92,7 @@ func UserUpsertOne(ctx *gin.Context) {
 		SendParamError(ctx, 0, e.Error())
 		return
 	}
+	user.Pass = ""
 
 	r := Db.Save(&user)
 	if r.Error != nil {

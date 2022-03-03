@@ -22,14 +22,15 @@ func Auth() gin.HandlerFunc {
 			ctx.AbortWithStatusJSON(401, "Token parse error")
 			return // `return` not works. To return before other handlers, use Abortxxx().
 		}
-		log.Println("UserId from token: ", claims.UserId)
+		log.Println("UserId from token: ", claims.ID)
 		var user User
-		r := Db.First(&user, claims.UserId)
+		r := Db.First(&user, claims.ID)
 		if r.Error != nil {
 			res.SendParamError(ctx, 0, r.Error.Error())
 			return
 		}
 
+		user.Pass = ""
 		ctx.Set("user", user)
 
 		ctx.Next()

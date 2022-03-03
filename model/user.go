@@ -1,9 +1,5 @@
 package model
 
-import (
-	. "website/db"
-)
-
 type User struct {
 	Model
 	Name       string  `json:"name,omitempty" binding:"required"`
@@ -38,7 +34,7 @@ type UserLoginParam struct {
 	return &user
 }*/
 
-func UserCreate(user *User) *User {
-	Db.Create(&user)
-	return user
-}
+//func UserCreate(user *User) *User {
+//	Db.Create(&user)
+//	return user
+//}

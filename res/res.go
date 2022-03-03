@@ -2,6 +2,7 @@ package res
 
 import (
 	"github.com/gin-gonic/gin"
+	"log"
 	"net/http"
 	"website/err"
 )
@@ -59,6 +60,8 @@ func SendParamError(ctx *gin.Context, errCode int, msg string) {
 	if c == 0 {
 		c = err.CodeParam
 	}
+	log.Println(errCode, msg)
+	// todo: must not return msg to front end user.
 	ctx.JSON(http.StatusBadRequest, paramErr(c, msg))
 }
 
@@ -67,5 +70,6 @@ func SendServerError(ctx *gin.Context, errCode int, msg string) {
 	if c == 0 {
 		c = err.CodeServer
 	}
+	log.Println(errCode, msg)
 	ctx.JSON(http.StatusInternalServerError, serverErr(c, msg))
 }
