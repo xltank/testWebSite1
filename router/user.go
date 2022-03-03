@@ -25,12 +25,12 @@ func UserInitRouter(engine *gin.Engine) {
 func UserList(ctx *gin.Context) {
 	v, ok := ctx.Get("user")
 	if !ok {
-		SendServerError(ctx, "Not found ctx.user")
+		SendServerError(ctx, 0, "Not found ctx.user")
 		return
 	}
 	var user User
 	if user, ok = v.(User); !ok {
-		SendServerError(ctx, "Invalid ctx.user")
+		SendServerError(ctx, 0, "Invalid ctx.user")
 		return
 	}
 
@@ -39,7 +39,7 @@ func UserList(ctx *gin.Context) {
 	var q UserQueryParam
 	err := ctx.ShouldBindQuery(&q)
 	if err != nil {
-		SendParamError(ctx, "")
+		SendParamError(ctx, 0, "")
 		return
 	}
 	fmt.Println("UserQueryParam:", q)
@@ -56,7 +56,7 @@ func UserList(ctx *gin.Context) {
 	}
 
 	if r.Error != nil {
-		SendParamError(ctx, r.Error.Error())
+		SendParamError(ctx, 0, r.Error.Error())
 		return
 	}
 
@@ -72,40 +72,34 @@ func UserCreateMany(ctx *gin.Context) {
 	var users []User
 	e := ctx.BindJSON(&users)
 	if e != nil {
-		SendParamError(ctx, e.Error())
+		SendParamError(ctx, 0, e.Error())
 		return
 	}
 	log.Println("UserCreate, ", users)
 	r := Db.Create(&users)
 	if r.Error != nil {
-		SendParamError(ctx, r.Error.Error())
+		SendParamError(ctx, 0, r.Error.Error())
 		return
 	}
 
-	ctx.JSON(200, gin.H{
-		"rtn":  0,
-		"data": users,
-	})
+	SendOK(ctx, users)
 }
 
 func UserUpsertOne(ctx *gin.Context) {
 	var user User
 	e := ctx.BindJSON(&user)
 	if e != nil {
-		SendParamError(ctx, e.Error())
+		SendParamError(ctx, 0, e.Error())
 		return
 	}
 
 	r := Db.Save(&user)
 	if r.Error != nil {
-		SendParamError(ctx, r.Error.Error())
+		SendParamError(ctx, 0, r.Error.Error())
 		return
 	}
 
-	ctx.JSON(200, gin.H{
-		"rtn":  0,
-		"data": user,
-	})
+	SendOK(ctx, user)
 
 }
 
@@ -113,7 +107,7 @@ func UserAddToGroup(ctx *gin.Context) {
 	var ug UserGroup
 	err := ctx.ShouldBindUri(&ug)
 	if err != nil {
-		SendParamError(ctx, err.Error())
+		SendParamError(ctx, 0, err.Error())
 		return
 	}
 	log.Println("ug:", ug)
@@ -147,7 +141,7 @@ func UserAddToGroup(ctx *gin.Context) {
 	})*/
 
 	if err != nil {
-		SendParamError(ctx, err.Error())
+		SendParamError(ctx, 0, err.Error())
 		return
 	}
 	SendOK(ctx, ug)

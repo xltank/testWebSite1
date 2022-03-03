@@ -31,7 +31,7 @@ func createMany(ctx *gin.Context) {
 	var gs []Group
 	err := ctx.ShouldBindJSON(&gs)
 	if err != nil {
-		res.SendParamError(ctx, err.Error())
+		res.SendParamError(ctx, 0, err.Error())
 		return
 	}
 

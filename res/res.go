@@ -3,65 +3,69 @@ package res
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"website/err"
 )
 
-type Response struct {
+type response struct {
 	Rtn    int         `json:"rtn"`
 	ErrMsg string      `json:"errMsg"`
 	Data   interface{} `json:"data"`
 }
 
 /*
-res.SendOK(data)
-res.SendParamErr(error.ErrUserLogin, "user id: xxxx")
-res.SendParamErr(error.Errxxx, err)
+res.SendOK(ctx, data)
+res.SendParamErr(ctx, error.ErrUserLogin, "user id: xxxx")
+res.SendParamError(ctx, err)
 */
 
-func response(rtn int, msg string) *Response {
-	return &Response{
-		Rtn:    rtn,
-		ErrMsg: msg,
-		Data:   nil,
-	}
-}
-
-func (r *Response) Error(msg string) Response {
-	if msg == "" {
-		msg = "Param error"
-	}
-	return Response{
-		Rtn:    r.Rtn,
-		ErrMsg: msg,
-		Data:   nil, //r.Data,
-	}
-}
-
-func (r *Response) Json(data interface{}) Response {
-	return Response{
-		Rtn:    r.Rtn,
+func ok(data interface{}) *response {
+	return &response{
+		Rtn:    0,
 		ErrMsg: "",
 		Data:   data,
 	}
 }
 
-var (
-	Ok        = response(0, "")               // 成功
-	ServerErr = response(1000, "Serve Error") //服务器错误，请重新再试
-	ParamErr  = response(2000, "Param Error")
-	//UserPasswordErr = response(2002, "User Password Error")
-	//TokenParseErr   = response(2004, "Token Parse Error")
-	//AuthErr         = response(2006, "Auth Error")
+func fail(code int, msg string) *response {
+	return &response{
+		Rtn:    code,
+		ErrMsg: msg,
+		Data:   nil,
+	}
+}
 
-)
+func paramErr(code int, msg string) *response {
+	if code == 0 {
+		return fail(code, msg)
+	} else {
+		return fail(err.CodeParam, msg)
+	}
+}
+
+func serverErr(code int, msg string) *response {
+	if code == 0 {
+		return fail(code, msg)
+	} else {
+		return fail(err.CodeServer, msg)
+	}
+}
 
 func SendOK(ctx *gin.Context, data interface{}) {
-	ctx.JSON(http.StatusOK, Ok.Json(data))
+	ctx.JSON(http.StatusOK, ok(data))
 }
 
-func SendParamError(ctx *gin.Context, msg string) {
-	ctx.JSON(http.StatusBadRequest, ParamErr.Error(msg))
+func SendParamError(ctx *gin.Context, errCode int, msg string) {
+	c := errCode
+	if c == 0 {
+		c = err.CodeParam
+	}
+	ctx.JSON(http.StatusBadRequest, paramErr(c, msg))
 }
 
-func SendServerError(ctx *gin.Context, msg string) {
-	ctx.JSON(http.StatusInternalServerError, ServerErr.Error(msg))
+func SendServerError(ctx *gin.Context, errCode int, msg string) {
+	c := errCode
+	if c == 0 {
+		c = err.CodeServer
+	}
+	ctx.JSON(http.StatusInternalServerError, serverErr(c, msg))
 }

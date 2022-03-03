@@ -31,7 +31,7 @@ func main() {
 		if err, ok := recovered.(string); ok {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, err)
 		}
-		c.AbortWithStatus(http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"rtn": 1000})
 	}))
 
 	r.Use(gin.LoggerWithFormatter(func(param gin.LogFormatterParams) string {

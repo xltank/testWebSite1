@@ -26,7 +26,7 @@ func Auth() gin.HandlerFunc {
 		var user User
 		r := Db.First(&user, claims.UserId)
 		if r.Error != nil {
-			res.SendParamError(ctx, r.Error.Error())
+			res.SendParamError(ctx, 0, r.Error.Error())
 			return
 		}
 
