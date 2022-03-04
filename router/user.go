@@ -9,7 +9,7 @@ import (
 	"strings"
 	. "website/db"
 	. "website/model"
-	. "website/res"
+	"website/res"
 )
 
 var UserFields = []string{"email", "id", "name", "department", "role", "createdAt", "updatedAt"}
@@ -23,23 +23,23 @@ func UserInitRouter(engine *gin.Engine) {
 }
 
 func UserList(ctx *gin.Context) {
+	// test codes
 	v, ok := ctx.Get("user")
 	if !ok {
-		SendServerError(ctx, 0, "Not found ctx.user")
+		res.SendServerError(ctx, 0, "Not found ctx.user")
 		return
 	}
 	var user User
 	if user, ok = v.(User); !ok {
-		SendServerError(ctx, 0, "Invalid ctx.user")
+		res.SendServerError(ctx, 0, "Invalid ctx.user")
 		return
 	}
-
-	log.Println(user)
+	log.Println("ctx.user:", user)
 
 	var q UserQueryParam
 	err := ctx.ShouldBindQuery(&q)
 	if err != nil {
-		SendParamError(ctx, 0, "")
+		res.SendParamError(ctx, 0, "")
 		return
 	}
 	fmt.Println("UserQueryParam:", q)
@@ -50,17 +50,17 @@ func UserList(ctx *gin.Context) {
 	var total int64
 	var r *gorm.DB
 	if q.Keyword != "" {
-		r = Db.Preload("Groups").Where("name like ?", kw).Or("email like ?", kw).Or("department like ?", kw).Limit(q.Limit).Offset(q.Offset).Find(&users).Select(UserFields).Count(&total)
+		r = Db.Model(&user).Preload("Groups").Where("name like ?", kw).Or("email like ?", kw).Or("department like ?", kw).Count(&total).Order("createdAt desc").Offset(q.Offset).Limit(q.Limit).Find(&users).Select(UserFields)
 	} else {
-		r = Db.Preload("Groups").Select(UserFields).Limit(q.Limit).Offset(q.Offset).Find(&users).Count(&total)
+		r = Db.Model(&user).Preload("Groups").Count(&total).Order("createdAt desc").Offset(q.Offset).Limit(q.Limit).Find(&users).Select(UserFields)
 	}
 
 	if r.Error != nil {
-		SendParamError(ctx, 0, r.Error.Error())
+		res.SendParamError(ctx, 0, r.Error.Error())
 		return
 	}
 
-	SendOK(ctx, gin.H{
+	res.SendOK(ctx, gin.H{
 		"list":   users,
 		"offset": q.Offset,
 		"limit":  q.Limit,
@@ -72,35 +72,35 @@ func UserCreateMany(ctx *gin.Context) {
 	var users []User
 	e := ctx.BindJSON(&users)
 	if e != nil {
-		SendParamError(ctx, 0, e.Error())
+		res.SendParamError(ctx, 0, e.Error())
 		return
 	}
 	log.Println("UserCreate, ", users)
 	r := Db.Create(&users)
 	if r.Error != nil {
-		SendParamError(ctx, 0, r.Error.Error())
+		res.SendParamError(ctx, 0, r.Error.Error())
 		return
 	}
 
-	SendOK(ctx, users)
+	res.SendOK(ctx, users)
 }
 
 func UserUpsertOne(ctx *gin.Context) {
 	var user User
 	e := ctx.BindJSON(&user)
 	if e != nil {
-		SendParamError(ctx, 0, e.Error())
+		res.SendParamError(ctx, 0, e.Error())
 		return
 	}
 	user.Pass = ""
 
 	r := Db.Save(&user)
 	if r.Error != nil {
-		SendParamError(ctx, 0, r.Error.Error())
+		res.SendParamError(ctx, 0, r.Error.Error())
 		return
 	}
 
-	SendOK(ctx, user)
+	res.SendOK(ctx, user)
 
 }
 
@@ -108,7 +108,7 @@ func UserAddToGroup(ctx *gin.Context) {
 	var ug UserGroup
 	err := ctx.ShouldBindUri(&ug)
 	if err != nil {
-		SendParamError(ctx, 0, err.Error())
+		res.SendParamError(ctx, 0, err.Error())
 		return
 	}
 	log.Println("ug:", ug)
@@ -142,8 +142,8 @@ func UserAddToGroup(ctx *gin.Context) {
 	})*/
 
 	if err != nil {
-		SendParamError(ctx, 0, err.Error())
+		res.SendParamError(ctx, 0, err.Error())
 		return
 	}
-	SendOK(ctx, ug)
+	res.SendOK(ctx, ug)
 }
