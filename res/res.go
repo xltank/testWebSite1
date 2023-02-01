@@ -1,10 +1,11 @@
 package res
 
 import (
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
-	"website/err"
+	"websiteGin/err"
+
+	"github.com/gin-gonic/gin"
 )
 
 type response struct {
@@ -14,9 +15,9 @@ type response struct {
 }
 
 /*
-res.SendOK(ctx, data)
-res.SendParamErr(ctx, error.ErrUserLogin, "user id: xxxx")
-res.SendParamError(ctx, err)
+res.SendOK(c, data)
+res.SendParamErr(c, error.ErrUserLogin, "user id: xxxx")
+res.SendParamError(c, err)
 */
 
 func ok(data interface{}) *response {
@@ -51,8 +52,8 @@ func serverErr(code int, msg string) *response {
 	}
 }
 
-func SendOK(ctx *gin.Context, data interface{}) {
-	ctx.JSON(http.StatusOK, ok(data))
+func SendOK(c *gin.Context, data interface{}) {
+	c.JSON(http.StatusOK, ok(data))
 }
 
 func SendParamError(ctx *gin.Context, errCode int, msg string) {

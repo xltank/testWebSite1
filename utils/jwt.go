@@ -2,9 +2,10 @@ package utils
 
 import (
 	"fmt"
-	"github.com/dgrijalva/jwt-go"
 	"time"
-	. "website/model"
+	. "websiteGin/model"
+
+	"github.com/dgrijalva/jwt-go"
 )
 
 var jwtKey = []byte("dddjjd22dad")

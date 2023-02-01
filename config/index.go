@@ -1,10 +1,10 @@
 package config
 
 import (
-	"fmt"
-	"github.com/spf13/viper"
 	"log"
 	"os"
+
+	"github.com/spf13/viper"
 )
 
 type Mongo struct {
@@ -16,9 +16,11 @@ type Mysql struct {
 }
 
 type Config struct {
-	Env   string `json:"env"`
-	Mongo Mongo  `json:"mongo"`
-	Mysql Mysql  `json:"mysql"`
+	Env        string `json:"env,omitempty"`
+	Port       string `json:"port,omitempty"`
+	Mongo      Mongo  `json:"mongo,omitempty"`
+	Mysql      Mysql  `json:"mysql,omitempty"`
+	DefaultVar string `json:"default_var,omitempty"`
 }
 
 func init() {
@@ -27,6 +29,7 @@ func init() {
 var Conf Config
 
 func Init() (err error) {
+	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
 	log.Println("init config with viper ...")
 
 	v := viper.New()
@@ -36,22 +39,25 @@ func Init() (err error) {
 	v.SetConfigName("default")
 	v.SetConfigType(configType)
 
-	fmt.Println("read config [default] ...")
+	// log.Println("read config [default] ...")
 	if err = v.ReadInConfig(); err != nil {
-		fmt.Println("get default.config:", err)
+		log.Println("get default.config:", err)
 		return err
 	}
 
 	configs := v.AllSettings()
-	// 将default中的配置全部以默认配置写入
+	// 将default中的配置全部以默认配置写入，否则无法达到local覆盖default的目的。
 	for k, value := range configs {
 		v.SetDefault(k, value)
 	}
-	env := os.Getenv("GO_ENV")
+
+	// log.Println("test env var:", os.Getenv("var1"))
+	env := os.Getenv("WEBSITE_ENV")
+	log.Println("env:", env)
 	// 根据配置的env读取相应的配置信息
 
 	if env != "" {
-		fmt.Printf("read config [%s] ...\n", env)
+		// log.Printf("read config [%s] ...\n", env)
 		v.SetConfigName(env)
 		err = v.ReadInConfig()
 		if err != nil {
@@ -59,10 +65,12 @@ func Init() (err error) {
 		}
 	}
 
+	// log.Println("default var:", v.GetString("defaultVar"))
+
 	if err = v.Unmarshal(&Conf); err != nil {
-		fmt.Println("config Unmarshal err:", err)
+		log.Println("config Unmarshal err:", err)
 		return err
 	}
-	log.Println("init config done:", Conf)
+	log.Println("init config done, defaultVar:", Conf.DefaultVar)
 	return nil
 }

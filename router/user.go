@@ -2,14 +2,15 @@ package router
 
 import (
 	"fmt"
+	"log"
+	"strings"
+	. "websiteGin/db"
+	. "websiteGin/model"
+	"websiteGin/res"
+
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
-	"log"
-	"strings"
-	. "website/db"
-	. "website/model"
-	"website/res"
 )
 
 var UserFields = []string{"email", "id", "name", "department", "role", "createdAt", "updatedAt"}
@@ -22,24 +23,24 @@ func UserInitRouter(engine *gin.Engine) {
 	r.POST("/:uid/group/:gid/role/:role", UserAddToGroup)
 }
 
-func UserList(ctx *gin.Context) {
+func UserList(c *gin.Context) {
 	// test codes
-	v, ok := ctx.Get("user")
+	v, ok := c.Get("user")
 	if !ok {
-		res.SendServerError(ctx, 0, "Not found ctx.user")
+		res.SendServerError(c, 0, "Not found c.user")
 		return
 	}
 	var user User
 	if user, ok = v.(User); !ok {
-		res.SendServerError(ctx, 0, "Invalid ctx.user")
+		res.SendServerError(c, 0, "Invalid c.user")
 		return
 	}
-	log.Println("ctx.user:", user)
+	log.Println("c.user:", user)
 
 	var q UserQueryParam
-	err := ctx.ShouldBindQuery(&q)
+	err := c.ShouldBindQuery(&q)
 	if err != nil {
-		res.SendParamError(ctx, 0, "")
+		res.SendParamError(c, 0, "")
 		return
 	}
 	fmt.Println("UserQueryParam:", q)
@@ -56,11 +57,11 @@ func UserList(ctx *gin.Context) {
 	}
 
 	if r.Error != nil {
-		res.SendParamError(ctx, 0, r.Error.Error())
+		res.SendParamError(c, 0, r.Error.Error())
 		return
 	}
 
-	res.SendOK(ctx, gin.H{
+	res.SendOK(c, gin.H{
 		"list":   users,
 		"offset": q.Offset,
 		"limit":  q.Limit,
@@ -68,47 +69,47 @@ func UserList(ctx *gin.Context) {
 	})
 }
 
-func UserCreateMany(ctx *gin.Context) {
+func UserCreateMany(c *gin.Context) {
 	var users []User
-	e := ctx.BindJSON(&users)
+	e := c.BindJSON(&users)
 	if e != nil {
-		res.SendParamError(ctx, 0, e.Error())
+		res.SendParamError(c, 0, e.Error())
 		return
 	}
 	log.Println("UserCreate, ", users)
 	r := Db.Create(&users)
 	if r.Error != nil {
-		res.SendParamError(ctx, 0, r.Error.Error())
+		res.SendParamError(c, 0, r.Error.Error())
 		return
 	}
 
-	res.SendOK(ctx, users)
+	res.SendOK(c, users)
 }
 
-func UserUpsertOne(ctx *gin.Context) {
+func UserUpsertOne(c *gin.Context) {
 	var user User
-	e := ctx.BindJSON(&user)
+	e := c.BindJSON(&user)
 	if e != nil {
-		res.SendParamError(ctx, 0, e.Error())
+		res.SendParamError(c, 0, e.Error())
 		return
 	}
 	user.Pass = ""
 
 	r := Db.Save(&user)
 	if r.Error != nil {
-		res.SendParamError(ctx, 0, r.Error.Error())
+		res.SendParamError(c, 0, r.Error.Error())
 		return
 	}
 
-	res.SendOK(ctx, user)
+	res.SendOK(c, user)
 
 }
 
-func UserAddToGroup(ctx *gin.Context) {
+func UserAddToGroup(c *gin.Context) {
 	var ug UserGroup
-	err := ctx.ShouldBindUri(&ug)
+	err := c.ShouldBindUri(&ug)
 	if err != nil {
-		res.SendParamError(ctx, 0, err.Error())
+		res.SendParamError(c, 0, err.Error())
 		return
 	}
 	log.Println("ug:", ug)
@@ -142,8 +143,8 @@ func UserAddToGroup(ctx *gin.Context) {
 	})*/
 
 	if err != nil {
-		res.SendParamError(ctx, 0, err.Error())
+		res.SendParamError(c, 0, err.Error())
 		return
 	}
-	res.SendOK(ctx, ug)
+	res.SendOK(c, ug)
 }

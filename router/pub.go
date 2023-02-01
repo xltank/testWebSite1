@@ -1,17 +1,17 @@
 package router
 
 import (
-	"fmt"
-	"github.com/gin-gonic/gin"
 	"time"
-	"website/res"
+	"websiteGin/res"
+
+	"github.com/gin-gonic/gin"
 )
 
 func PubInitRouter(engine *gin.Engine) {
 	r := engine.Group("/api/pub")
 	r.GET("/ping", PubGetServerTime)
-	r.GET("/panic", func(ctx *gin.Context) {
-		panic("/pub/panic")
+	r.GET("/panic", func(c *gin.Context) {
+		panic("panic info: test panic")
 	})
 
 	r.GET("/file/main", func(c *gin.Context) {
@@ -19,12 +19,9 @@ func PubInitRouter(engine *gin.Engine) {
 	})
 }
 
-func PubGetServerTime(ctx *gin.Context) {
-	fmt.Println("Pub Get Server Time")
-	res.SendOK(ctx, gin.H{
-		"rtn": 0,
-		"data": gin.H{
-			"now": time.Now(),
-		},
+func PubGetServerTime(c *gin.Context) {
+	// fmt.Println("Pub Get Server Time")
+	res.SendOK(c, gin.H{
+		"now": time.Now(),
 	})
 }

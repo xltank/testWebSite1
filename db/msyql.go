@@ -1,12 +1,13 @@
 package db
 
 import (
+	"websiteGin/config"
+
+	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
-	"website/config"
 )
-import "gorm.io/driver/mysql"
 
 var Db *gorm.DB
 
@@ -20,11 +21,7 @@ func InitMysql() {
 		},
 	})
 	if err != nil {
-		panic("connect mysql error")
-	}
-
-	if err != nil {
-		panic(err)
+		panic("connect mysql error:" + err.Error())
 	}
 
 	Db = db

@@ -39,7 +39,7 @@ func loadRSAKey() {
 		fmt.Println(`ParsePKCS1PrivateKey error: `, err)
 		return
 	}
-	fmt.Println(rsaKey)
+	// fmt.Println(rsaKey)
 }
 
 func Encode(str string) []byte {

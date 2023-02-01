@@ -1,9 +1,11 @@
 {
-    "env": "local",
+    "env": "default",
+    "port": "8081",
     "mongo": {
         "uri": "mongodb://localhost:27017/test"
     },
     "mysql": {
         "uri": "root:root1234@tcp(127.0.0.1:3306)/test?charset=utf8mb4&parseTime=True&loc=Local"
-    }
+    },
+    "defaultVar": "defaultVar in default.json"
 }
