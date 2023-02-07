@@ -13,8 +13,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-const passSalt = "jpijsdfvamsdvoasjdf"
-
 func init() {
 }
 
@@ -24,16 +22,11 @@ func SignUp(c *gin.Context) {
 		res.SendParamError(c, 0, e.Error())
 		return
 	}
-	fmt.Println("Singup", u)
 
-	originalPass := utils.Decode(u.Pass)
+	originalPass := utils.DecodeRSA(u.Pass)
 
+	log.Println("Singup,", u.Email, originalPass)
 	// TODO: check email & password pattern
-
-	// gen salt
-	//salt1 := gonanoid.MustID(utils.Rand(10, 20))
-	//salt2 := gonanoid.MustID(utils.Rand(10, 20))
-	//fmt.Println(`---`, salt1, salt2)
 
 	hashedPass, err := bcrypt.GenerateFromPassword([]byte(originalPass), bcrypt.DefaultCost)
 	if err != nil {
@@ -61,7 +54,7 @@ func UserLogin(c *gin.Context) {
 		return
 	}
 
-	originalPass := utils.Decode(u.Pass)
+	originalPass := utils.DecodeRSA(u.Pass)
 	log.Println(`originalPass `, originalPass)
 
 	user := User{}

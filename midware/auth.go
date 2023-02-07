@@ -2,8 +2,9 @@ package midware
 
 import (
 	"log"
-	. "websiteGin/db"
-	. "websiteGin/model"
+	"websiteGin/db"
+	"websiteGin/error"
+	"websiteGin/model"
 	"websiteGin/res"
 	"websiteGin/utils"
 
@@ -13,19 +14,20 @@ import (
 func Auth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
-		cookie, err := c.Cookie("token")
+		cookie, _ := c.Cookie("token")
 
-		log.Println("Auth, coolie: " + cookie)
+		// log.Println("Auth, cookie: " + cookie)
 		_, claims, err := utils.ParseToken(cookie)
 
 		if err != nil {
 			log.Println("get cookie error:", err)
-			c.AbortWithStatusJSON(401, "Token parse error")
+			res.SendParamError(c, error.CodeUserLogin, "Please Login")
+			c.Abort()
 			return // `return` not works. To return before other handlers, use Abortxxx().
 		}
 		log.Println("UserId from token: ", claims.ID)
-		var user User
-		r := Db.First(&user, claims.ID)
+		var user model.User
+		r := db.Db.First(&user, claims.ID)
 		if r.Error != nil {
 			res.SendParamError(c, 0, r.Error.Error())
 			return

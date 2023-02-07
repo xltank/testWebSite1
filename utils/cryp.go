@@ -42,7 +42,7 @@ func loadRSAKey() {
 	// fmt.Println(rsaKey)
 }
 
-func Encode(str string) []byte {
+func EncodeRSA(str string) []byte {
 	h := sha256.New()
 	bytes, err := rsa.EncryptOAEP(h, rand.Reader, &rsaKey.PublicKey, []byte(str), nil)
 	if err != nil {
@@ -51,11 +51,12 @@ func Encode(str string) []byte {
 	return bytes
 }
 
-func Decode(str string) string {
+func DecodeRSA(str string) string {
 	strBytes, _ := base64.StdEncoding.DecodeString(str)
-	bytes, err := rsa.DecryptPKCS1v15(rand.Reader, rsaKey, strBytes)
+	// bytes, err := rsa.DecryptPKCS1v15(rand.Reader, rsaKey, strBytes)
+	bytes, err := rsa.DecryptOAEP(sha256.New(), rand.Reader, rsaKey, strBytes, nil)
 	if err != nil {
-		fmt.Println(`decode error: `, err)
+		panic(`decode error: ` + err.Error())
 	}
 
 	return string(bytes)

@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"errors"
 	"fmt"
 	"time"
 	. "websiteGin/model"
@@ -37,6 +38,9 @@ func GetToken(u User) (string, error) {
 }
 
 func ParseToken(str string) (*jwt.Token, *Claims, error) {
+	if str == "" {
+		return nil, nil, errors.New("empty token")
+	}
 	claims := &Claims{}
 	token, err := jwt.ParseWithClaims(str, claims, func(token *jwt.Token) (interface{}, error) {
 		return jwtKey, nil

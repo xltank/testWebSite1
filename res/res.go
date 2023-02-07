@@ -3,7 +3,7 @@ package res
 import (
 	"log"
 	"net/http"
-	"websiteGin/err"
+	error "websiteGin/error"
 
 	"github.com/gin-gonic/gin"
 )
@@ -40,7 +40,7 @@ func paramErr(code int, msg string) *response {
 	if code == 0 {
 		return fail(code, msg)
 	} else {
-		return fail(err.CodeParam, msg)
+		return fail(error.CodeParam, msg)
 	}
 }
 
@@ -48,7 +48,7 @@ func serverErr(code int, msg string) *response {
 	if code == 0 {
 		return fail(code, msg)
 	} else {
-		return fail(err.CodeServer, msg)
+		return fail(error.CodeServer, msg)
 	}
 }
 
@@ -57,20 +57,18 @@ func SendOK(c *gin.Context, data interface{}) {
 }
 
 func SendParamError(ctx *gin.Context, errCode int, msg string) {
-	c := errCode
-	if c == 0 {
-		c = err.CodeParam
+	if errCode == 0 {
+		errCode = error.CodeParam
 	}
 	log.Println(errCode, msg)
 	// todo: must not return msg to front end user.
-	ctx.JSON(http.StatusBadRequest, paramErr(c, msg))
+	ctx.JSON(http.StatusBadRequest, paramErr(errCode, msg))
 }
 
 func SendServerError(ctx *gin.Context, errCode int, msg string) {
-	c := errCode
-	if c == 0 {
-		c = err.CodeServer
+	if errCode == 0 {
+		errCode = error.CodeServer
 	}
 	log.Println(errCode, msg)
-	ctx.JSON(http.StatusInternalServerError, serverErr(c, msg))
+	ctx.JSON(http.StatusInternalServerError, serverErr(errCode, msg))
 }
